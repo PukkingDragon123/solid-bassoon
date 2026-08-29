@@ -6,132 +6,213 @@
     "  python3 tools/install_ai_asset.py <key> <downloaded-file>",
     "which crops/resizes to the target and writes it to the right path.",
     "Keys ending in -p are the portrait plates phones load; generate both, or",
-    "install the same source twice and let the installer recompose it."
+    "Keys ending in -p are the portrait plates phones load; props/tube-body and props/tube-sticks are the split plates the shake scene animates separately."
   ],
   "style": "Photoreal, cinematic, shot on a full-frame camera at 35mm, warm candlelight and dusk key light, deep shadows, subtle haze, no text, no watermark, no people unless stated.",
   "assets": {
     "scenes/gate-sky": {
-      "size": [1920, 1080],
+      "size": [
+        1920,
+        1080
+      ],
       "alpha": false,
       "aspect_ratio": "16:9",
       "prompt": "Empty tropical dusk sky over Thailand just after sunset, deep indigo at the top grading to violet then a band of hot orange on the horizon, thin backlit cirrus clouds, first stars appearing, a small bright moon high on the right. Nothing but sky and a soft haze layer. Photoreal, cinematic, no land, no buildings."
     },
     "scenes/gate-far": {
-      "size": [1920, 1080],
+      "size": [
+        1920,
+        1080
+      ],
       "alpha": true,
       "aspect_ratio": "16:9",
       "prompt": "Distant silhouettes of Thai temple spires against a dusk sky: two Khmer-style prang towers and three bell-shaped chedi stupas, plus a ragged tropical treeline. Everything in near-silhouette, hazy violet, rim-lit by the last orange light. Transparent background above the treeline. Photoreal, telephoto compression."
     },
     "scenes/gate-mid": {
-      "size": [1920, 1080],
+      "size": [
+        1920,
+        1080
+      ],
       "alpha": true,
       "aspect_ratio": "16:9",
       "prompt": "A Thai Buddhist ubosot (ordination hall) at dusk, shot straight on and slightly from below. Three tiered roofs of orange terracotta tiles with green glazed borders, gilded chofa finials at the ridges, serrated bai raka fins down the barge boards, swan-tail hang hong at the eaves. A deep-red gilded pediment carrying a golden Garuda. White stucco columns with lotus-bud capitals, red lacquered shuttered windows with gold trim, and a pair of tall gilded doors standing open with warm orange light pouring out. Transparent background around the building. Photoreal, cinematic."
     },
     "scenes/gate-near": {
-      "size": [1920, 1080],
+      "size": [
+        1920,
+        1080
+      ],
       "alpha": true,
       "aspect_ratio": "16:9",
       "prompt": "Foreground framing elements for a temple courtyard at night: a wide flight of worn stone steps rising away from the camera, flanked by gilded naga serpent balustrades with reared heads at the bottom, and two warm paper lanterns hanging at the top left and right corners with bodhi branches silhouetted around them. Everything else transparent. Photoreal, shallow depth of field on the lanterns."
     },
     "scenes/hall-bg": {
-      "size": [1920, 1080],
+      "size": [
+        1920,
+        1080
+      ],
       "alpha": false,
       "aspect_ratio": "16:9",
       "prompt": "Interior of a Thai ordination hall in one-point perspective, looking down the central aisle toward the far wall. Rows of red lacquered columns with gilded lotus capitals recede to a vanishing point, a dark coffered ceiling with gold beams above, worn teak plank floor below. The far wall is deep red with a large gilded arch and gold rays behind where the principal Buddha image sits. Shafts of warm light from high side windows, incense haze in the air. Empty of people and of any statue. Photoreal, cinematic, candlelit."
     },
     "scenes/hall-altar": {
-      "size": [1500, 620],
+      "size": [
+        1500,
+        620
+      ],
       "alpha": true,
       "aspect_ratio": "21:9",
       "prompt": "A Thai tiered altar table (โต๊ะหมู่บูชา) seen straight on: three stepped tiers in red lacquer and gilded teak with kanok flame carving on the skirts, brass candlesticks on the top tier, brass vases of pink lotus, offering bowls. Warm candlelight from the front. Transparent background. Photoreal product lighting."
     },
     "scenes/hall-near": {
-      "size": [1920, 1080],
+      "size": [
+        1920,
+        1080
+      ],
       "alpha": true,
       "aspect_ratio": "16:9",
       "prompt": "Foreground of a temple hall floor: a woven pandan prayer mat laid on dark teak boards running toward the camera, and two very dark out-of-focus red lacquer columns at the extreme left and right edges framing the shot. Everything else transparent. Photoreal, shallow depth of field."
     },
     "scenes/drawer-wall": {
-      "size": [1600, 1000],
+      "size": [
+        1600,
+        1000
+      ],
       "alpha": false,
       "aspect_ratio": "16:10",
       "prompt": "A Thai temple fortune cabinet shot straight on: a teak wall cabinet of 28 small drawers in a 7 across by 4 down grid, each with a small brass number plate and a round brass pull, worn with age and handling. Warm raking candlelight from the left. Fills the frame edge to edge, no perspective distortion. Photoreal."
     },
     "scenes/drawer-wall-p": {
-      "size": [1000, 1500],
+      "size": [
+        1000,
+        1500
+      ],
       "alpha": false,
       "aspect_ratio": "2:3",
       "prompt": "A Thai temple fortune cabinet shot straight on: a teak wall cabinet of 28 small drawers in a 4 across by 7 down grid, each with a small brass number plate and a round brass pull, worn with age. Warm raking candlelight from the left. Fills the frame edge to edge, no perspective distortion. Photoreal."
     },
     "props/buddha": {
-      "size": [1000, 1360],
+      "size": [
+        1000,
+        1360
+      ],
       "alpha": true,
       "aspect_ratio": "3:4",
       "prompt": "A gilded Thai Buddha image in the subduing-Mara posture (ปางมารวิชัย), seated cross-legged on a lotus pedestal, right hand over the right knee, left hand in the lap. Sukhothai style: elongated oval face, downcast eyes, serene archaic smile, snail-shell hair curls, flame finial rising from the ushnisha, robe over the left shoulder. Solid gold leaf over lacquer, warm candlelight from the lower left. Shot straight on, transparent background. Photoreal museum photography."
     },
     "props/censer": {
-      "size": [900, 620],
+      "size": [
+        900,
+        620
+      ],
       "alpha": true,
       "aspect_ratio": "3:2",
       "prompt": "An antique Thai brass incense censer (กระถางธูป): a wide footed bowl on three legs, chased with kanok flame patterns, filled with pale grey sand and a few burnt-down incense stubs. Shot straight on, warm candlelight, transparent background. Photoreal product photography."
     },
     "props/candle": {
-      "size": [280, 760],
+      "size": [
+        280,
+        760
+      ],
       "alpha": true,
       "aspect_ratio": "1:3",
       "prompt": "A single tall yellow beeswax temple candle standing in a small brass holder, unlit, with wax drips down one side and a short black wick. Shot straight on, transparent background. Photoreal product photography."
     },
     "props/incense": {
-      "size": [340, 920],
+      "size": [
+        340,
+        920
+      ],
       "alpha": true,
       "aspect_ratio": "1:3",
       "prompt": "Three thin Thai incense sticks held together in a slight fan, unlit: pale bamboo cane at the bottom, dark reddish-brown sandalwood coating over the top two thirds. Vertical, shot straight on, transparent background. Photoreal macro."
     },
     "props/incense-lit": {
-      "size": [340, 920],
+      "size": [
+        340,
+        920
+      ],
       "alpha": true,
       "aspect_ratio": "1:3",
       "prompt": "Three thin Thai incense sticks held together in a slight fan, freshly lit: pale bamboo cane at the bottom, dark reddish-brown coating above, and glowing orange embers at the tips with the first wisp of smoke. Vertical, shot straight on, transparent background. Photoreal macro."
     },
     "props/tube": {
-      "size": [680, 1080],
+      "size": [
+        680,
+        1080
+      ],
       "alpha": true,
       "aspect_ratio": "5:8",
       "prompt": "A Thai fortune-stick cylinder (กระบอกเซียมซี): a worn bamboo tube with visible node rings and a red cord tied round its waist, packed with about thirty flat bamboo fortune sticks whose red-lacquered tops fan out of the mouth. Standing upright, shot straight on, transparent background. Photoreal."
     },
+    "props/tube-body": {
+      "size": [
+        680,
+        1080
+      ],
+      "alpha": true,
+      "aspect_ratio": "5:8",
+      "prompt": "An empty Thai fortune-stick cylinder (กระบอกเซียมซี): a worn bamboo tube with visible node rings and a red cord tied round its waist, mouth open and empty at the top, no sticks in it at all. Standing upright, shot straight on, transparent background. Photoreal."
+    },
+    "props/tube-sticks": {
+      "size": [
+        680,
+        1080
+      ],
+      "alpha": true,
+      "aspect_ratio": "5:8",
+      "prompt": "A tight bundle of about thirty flat bamboo Thai fortune sticks fanning outward, red-lacquered tops at varying heights, seen as if standing in a tube that is not shown. No container, no cylinder — only the sticks, on a transparent background. Shot straight on. Photoreal."
+    },
     "props/stick": {
-      "size": [130, 1000],
+      "size": [
+        130,
+        1000
+      ],
       "alpha": true,
       "aspect_ratio": "1:8",
       "prompt": "A single flat Thai fortune stick: a thin pale bamboo slat with a red-lacquered head at the top, blank (no number), slightly worn edges. Vertical, shot straight on, transparent background. Photoreal macro."
     },
     "props/slip": {
-      "size": [780, 1180],
+      "size": [
+        780,
+        1180
+      ],
       "alpha": true,
       "aspect_ratio": "2:3",
       "prompt": "A blank Thai fortune slip: a small sheet of cream mulberry paper with visible fibres and deckled torn edges, printed with a double red rule border and faded red kanok flourishes in each corner. The centre is completely blank — no text, no numbers, no characters of any kind. Shot flat from above, transparent background. Photoreal."
     },
     "props/lotus": {
-      "size": [440, 440],
+      "size": [
+        440,
+        440
+      ],
       "alpha": true,
       "aspect_ratio": "1:1",
       "prompt": "A single pink lotus flower offering, petals half open, golden centre, shot straight on. Transparent background. Photoreal macro, soft warm light."
     },
     "props/bell": {
-      "size": [440, 560],
+      "size": [
+        440,
+        560
+      ],
       "alpha": true,
       "aspect_ratio": "4:5",
       "prompt": "A small antique Thai bronze temple bell with a hanging loop, a flared lip and a clapper below, chased with kanok patterns. Shot straight on, transparent background. Photoreal product photography."
     },
     "props/kanok-corner": {
-      "size": [460, 460],
+      "size": [
+        460,
+        460
+      ],
       "alpha": true,
       "aspect_ratio": "1:1",
       "prompt": "A single gilded Thai kanok flame ornament carved in wood, arranged as a corner flourish opening toward the lower right. Gold leaf over red lacquer, transparent background, shot flat. Photoreal."
     },
     "tex/paper": {
-      "size": [512, 512],
+      "size": [
+        512,
+        512
+      ],
       "alpha": false,
       "aspect_ratio": "1:1",
       "prompt": "Seamless tileable texture of aged cream Thai mulberry (saa) paper: visible plant fibres suspended in the sheet, faint foxing, no printing, no text, even lighting, flat top-down scan."

@@ -219,6 +219,50 @@ export function emberSpec(getOrigin, opts = {}) {
   };
 }
 
+/**
+ * Blinking motes that spiral out from a point and drift upward — the swarm
+ * released when a drawer opens.  Between the spiral and the blink they read
+ * as fireflies rather than as sparks.
+ */
+export function magicMoteSpec(getOrigin, opts = {}) {
+  const spread = opts.spread ?? 90;
+  return {
+    kind: 'mote',
+    rate: opts.rate ?? 0,
+    make() {
+      const o = getOrigin();
+      const a0 = Math.random() * Math.PI * 2;
+      const swirl = (Math.random() < 0.5 ? -1 : 1) * (0.7 + Math.random() * 1.5);
+      const blink = 1.4 + Math.random() * 2.6;
+      return {
+        x: o.x + (Math.random() - 0.5) * 18,
+        y: o.y + (Math.random() - 0.5) * 18,
+        r0: 6 + Math.random() * spread,
+        a0,
+        cx0: o.x,
+        cy0: o.y,
+        vy: -14 - Math.random() * 34,
+        rot: 0,
+        size: 8 + Math.random() * 13,
+        life: 2.8 + Math.random() * 3.0,
+        blend: 'screen',
+        alpha: (t) =>
+          (opts.opacity ?? 0.95) *
+          Math.sin(Math.min(t, 1) * Math.PI) ** 0.7 *
+          (0.42 + 0.58 * Math.abs(Math.sin(t * blink * 6))),
+        update(p, dt) {
+          p.drift = (p.drift ?? 0) + dt;
+          const a = p.a0 + swirl * p.drift;
+          const r = p.r0 * (0.25 + p.drift * 0.55);
+          p.x = p.cx0 + Math.cos(a) * r;
+          p.y = p.cy0 + Math.sin(a) * r * 0.62 + p.vy * p.drift;
+        },
+        draw: (ctx, p) => drawSprite(ctx, p, 'ember', '#ffd97a'),
+      };
+    },
+  };
+}
+
 /** Gold raining down the frame — the celebration when a slip is revealed. */
 export function goldRainSpec(w, opts = {}) {
   return {

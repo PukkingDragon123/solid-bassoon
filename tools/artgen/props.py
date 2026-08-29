@@ -347,7 +347,13 @@ def incense(w=340, h=920, lit=False):
 # ==========================================================================
 
 
-def siamsee_tube(w=680, h=1080):
+def siamsee_tube(w=680, h=1080, part="all"):
+    """The cylinder and its sticks.
+
+    `part` splits them into separate plates ("sticks" / "body") so the app can
+    move the bundle inside the tube with a lag — secondary motion is most of
+    what makes a shake feel like it has mass.
+    """
     S = w / 680.0
     img = core.canvas(w, h, "#0a0503")
     p = Painter(img, light=(-0.52, -0.82), depth_scale=w / 520.0)
@@ -360,6 +366,8 @@ def siamsee_tube(w=680, h=1080):
         return m
 
     # the sticks first — the tube is painted over their lower halves
+    want_sticks = part in ("all", "sticks")
+    want_body = part in ("all", "body")
     rs = np.random.RandomState(17)
     sticks, heads = Shape(w, h), Shape(w, h)
     n = 27
@@ -372,8 +380,11 @@ def siamsee_tube(w=680, h=1080):
         sticks.polygon([(bx - sw, h * 0.62), (bx + sw, h * 0.62), (tx + sw * 0.9, top), (tx - sw * 0.9, top)])
         heads.polygon([(tx - sw * 0.9, top), (tx + sw * 0.9, top),
                        (tx + sw * 0.9, top + h * 0.055), (tx - sw * 0.9, top + h * 0.055)])
-    add(sticks.mask(), paint.BAMBOO, seed=1, depth=5, contact=0.35)
-    add(heads.mask(), paint.LACQUER_RED, seed=2, depth=4, contact=0.3)
+    if want_sticks:
+        add(sticks.mask(), paint.BAMBOO, seed=1, depth=5, contact=0.35)
+        add(heads.mask(), paint.LACQUER_RED, seed=2, depth=4, contact=0.3)
+    if not want_body:
+        return _finish_prop(p, masks)
 
     # the cylinder
     tube = _shape(w, h, [[(cx - w * 0.255, h * 0.995), (cx + w * 0.255, h * 0.995),

@@ -30,6 +30,7 @@ Deploying: push to `main` and the included GitHub Pages workflow publishes the r
 | ๑ หน้าวัด | เอียงเครื่อง/เลื่อนเมาส์เพื่อมองรอบ ๆ แล้วแตะ “เข้าวัด” |
 | ๒ วิหาร | แตะเทียนเพื่อจุด → ลากธูปไปจ่อเปลวเทียน → **กดค้างแล้วว่าบทนะโมตามทีละคำ ๓ จบ** → ลากไปปักกระถาง |
 | ๓ เขย่าเซียมซี | ลากกระบอกขึ้นลง หรือ **เขย่าเครื่องจริง** (DeviceMotion) จนไม้หล่น — มีคำเชียร์ขึ้นตามแรงเขย่า |
+
 | ๔ ตู้ใบเซียมซี | ลิ้นชักเลขที่ได้เลื่อนออก ใบเซียมซีลอยขึ้นมา |
 | ๕ คำทำนาย | อ่านคำทำนายเต็ม แล้วบันทึกเป็นรูปหรือแชร์ได้ |
 
@@ -43,6 +44,9 @@ Deploying: push to `main` and the included GitHub Pages workflow publishes the r
 | **หิ่งห้อย** | มาเกาะกระบอกเซียมซี กะพริบ เดินไปมา — เขย่าแล้วบินหนี แตะแล้วก็บินหนี เดี๋ยวก็กลับมา |
 | **ลิ้นชักอื่น** | แตะลิ้นชักที่ไม่ใช่ของท่าน มันจะสั่นแล้วปฏิเสธ (มี ๔ ประโยค สลับกัน) |
 | **ทองโปรย** | ตอนเปิดใบ ทองจะโปรยลงมาตามระดับใบที่ได้ — ดีเลิศได้เยอะสุด พร้อมเสียงฆ้อง |
+| **แตะตรงไหนก็ได้** | มีวงแหวนแสงกระเพื่อมออกจากจุดที่แตะ (zen ripple) — ตอนเปลี่ยนฉากก็มีวงใหญ่ ๓ ชั้น |
+| **ตู้เซียมซี** | ลิ้นชักที่เปิดพ่นลำแสงและฝูงหิ่งห้อยทองออกมา |
+| **เปิดใบ** | ใบเซียมซี **คลี่ออกเหมือนม้วนกระดาษ** — มีแกนไม้หัวทองไถลลงมาเผยกระดาษทีละส่วน |
 
 The prayer is the centrepiece: บทนะโม is prompted **one word at a time**, karaoke-style, with the
 full line underneath and a round counter, so you chant along rather than read a block of text.
@@ -121,6 +125,22 @@ src/
 assets/               rendered PNGs
 tools/                the art renderer, the AI swap pipeline, the dev server
 ```
+
+### แรงเขย่าเป็นฟิสิกส์จริง · The shake is simulated, not animated
+
+กระบอกเป็น **สปริงบิดที่มีแรงหน่วง** (damped torsional spring) ส่วนไม้ข้างในเป็นสปริงอีกตัวที่หลวมกว่า
+วิ่งตามกระบอกแบบช้ากว่าเสมอ — ความหน่วงตรงนี้แหละที่ทำให้รู้สึกว่ามีน้ำหนักจริง
+
+พลังงานไม่ได้นับจากระยะพิกเซล แต่นับจาก **จังหวะที่กระบอกกลับทิศ** (stroke) — ต้องเขย่าเป็นจังหวะจริง ๆ
+ถึงจะได้ ยิ่งแรงยิ่งได้มาก และมีพลังงานรั่วออกตลอดเวลา เขย่าเรื่อย ๆ ราว ๘ วินาทีไม้ถึงจะหล่น
+
+```
+angV += (-K·ang - C·angV)·dt          // กระบอก
+sAngV += (SK·(ang - sAng) - SC·sAngV)·dt   // ไม้ข้างใน ตามมาทีหลัง
+```
+
+The tube plate is split into `tube-body.png` and `tube-sticks.png` precisely so the bundle can
+lag behind the cylinder. Secondary motion is most of what makes a shake feel like it has mass.
 
 Sound is synthesised with the Web Audio API (no audio files ship). Haptics use
 `navigator.vibrate` where available. `prefers-reduced-motion` is respected throughout,

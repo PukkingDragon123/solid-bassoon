@@ -52,6 +52,9 @@ ASSETS = {
     "props/incense":      (props.incense,       dict(w=340, h=920, lit=False), True),
     "props/incense-lit":  (props.incense,       dict(w=340, h=920, lit=True), True),
     "props/tube":         (props.siamsee_tube,  dict(w=680, h=1080), True),
+    # split plates so the bundle can lag behind the cylinder while shaking
+    "props/tube-body":    (props.siamsee_tube,  dict(w=680, h=1080, part="body"), True),
+    "props/tube-sticks":  (props.siamsee_tube,  dict(w=680, h=1080, part="sticks"), True),
     "props/stick":        (props.siamsee_stick, dict(w=130, h=1000), True),
     "props/slip":         (props.slip,          dict(w=780, h=1180), True),
     "props/lotus":        (props.lotus,         dict(w=440, h=440), True),

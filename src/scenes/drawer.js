@@ -2,6 +2,7 @@
  * ฉาก ๔ · ตู้ใบเซียมซี — the numbered drawers, and the slip coming out.
  */
 
+import { FX, magicMoteSpec, emberSpec } from '../fx.js';
 import * as audio from '../audio.js';
 import * as haptics from '../haptics.js';
 import { go, toast } from '../router.js';
@@ -15,7 +16,14 @@ export function createDrawer() {
   const peek = document.getElementById('slip-peek');
   const caption = document.getElementById('drawer-caption');
   const openBtn = document.getElementById('open-slip');
+  const beam = document.getElementById('drawer-beam');
+  const fx = new FX(document.getElementById('fx-drawer'));
   let timers = [];
+
+  const cellCentre = (cell) => {
+    const r = cell.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  };
 
   // one cell per slip, laid over the rendered cabinet
   FORTUNES.forEach((f) => {
@@ -66,11 +74,25 @@ export function createDrawer() {
       peek.textContent = toThaiNumber(f.n);
 
       const cell = grid.querySelector(`[data-n="${f.n}"]`);
+      fx.clear();
+      fx.start();
+
       timers.push(
         setTimeout(() => {
-          cell?.classList.add('open');
+          if (!cell) return;
+          cell.classList.add('open');
           audio.clack(0.45);
           haptics.tap();
+
+          // the drawer breathes out light and a swarm of motes
+          const c = cellCentre(cell);
+          beam.style.left = `${c.x}px`;
+          beam.style.top = `${c.y}px`;
+          beam.classList.add('on');
+          const swarm = magicMoteSpec(() => cellCentre(cell), { spread: 190 });
+          fx.burst(swarm, 44);
+          const drip = fx.emit({ ...swarm, rate: 12 });
+          timers.push(setTimeout(() => fx.remove(drip), 5200));
         }, 620),
       );
       timers.push(
@@ -83,6 +105,9 @@ export function createDrawer() {
           }
           slip.hidden = false;
           audio.paperRustle();
+          audio.chime();
+          fx.burst(emberSpec(() => cellCentre(cell)), 22);
+          fx.burst(magicMoteSpec(() => cellCentre(cell), { spread: 150 }), 20);
           requestAnimationFrame(() => {
             slip.style.left = '50%';
             slip.style.top = '50%';
@@ -101,6 +126,9 @@ export function createDrawer() {
     exit() {
       timers.forEach(clearTimeout);
       timers = [];
+      fx.stop();
+      fx.clear();
+      beam.classList.remove('on');
     },
     reset() {
       grid.querySelectorAll('.drawer-cell.open').forEach((c) => c.classList.remove('open'));
@@ -109,6 +137,8 @@ export function createDrawer() {
       slip.style.left = '50%';
       slip.style.top = '50%';
       openBtn.hidden = true;
+      beam.classList.remove('on');
+      fx.clear();
       caption.textContent = 'กำลังหยิบใบเซียมซี…';
     },
   };

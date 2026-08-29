@@ -8,7 +8,7 @@ import { FX, smokeSpec, emberSpec, dustSpec } from '../fx.js';
 import { Parallax } from '../parallax.js';
 import * as audio from '../audio.js';
 import * as haptics from '../haptics.js';
-import { go, flash, floatWord } from '../router.js';
+import { go, flash, floatWord, ripple } from '../router.js';
 import { state } from '../state.js';
 import { toThaiNumber } from '../data/fortunes.js';
 
@@ -248,6 +248,7 @@ export function createShrine() {
   }
 
   el.addEventListener('pointerdown', (e) => {
+    ripple(e.clientX, e.clientY, { size: 190, soft: true });
     if (step === 'pray') startPray(e);
     else onDown(e);
   });

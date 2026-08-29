@@ -111,7 +111,9 @@
   <canvas class="fx" id="fx-shake"></canvas>
   <div class="tube-stage" id="tube-stage">
     <div class="tube-wrap" id="tube-wrap">
-      <img class="tube" src="assets/props/tube.png" alt="กระบอกเซียมซี" draggable="false">
+      <img class="tube tube-sticks" id="tube-sticks" src="assets/props/tube-sticks.png" alt="" draggable="false">
+      <img class="tube tube-body" src="assets/props/tube-body.png" alt="กระบอกเซียมซี" draggable="false">
+      <span class="tube-mouth-glow" id="tube-glow" aria-hidden="true"></span>
     </div>
     <button class="firefly" id="firefly" aria-label="หิ่งห้อย" hidden>
       <i class="ff-glow"></i><i class="ff-wing ff-wing-l"></i><i class="ff-wing ff-wing-r"></i><i class="ff-body"></i>
@@ -130,6 +132,8 @@
 <!-- ───────────────────────── ฉาก ๔ · ตู้ใบเซียมซี ───────────────────────── -->
 <section class="scene" id="scene-drawer" data-scene="drawer" hidden>
   <div class="drawer-room"></div>
+  <canvas class="fx" id="fx-drawer"></canvas>
+  <div class="drawer-beam" id="drawer-beam" aria-hidden="true"></div>
   <div class="drawer-stage">
     <div class="drawer-cabinet">
       <div class="drawer-grid" id="drawer-grid" role="list"></div>
@@ -148,7 +152,10 @@
 <section class="scene scene-scroll" id="scene-reading" data-scene="reading" hidden>
   <div class="reading-bg"></div>
   <canvas class="fx fx-fixed" id="fx-reading"></canvas>
-  <article class="sheet" id="reading-sheet"></article>
+  <div class="sheet-wrap" id="sheet-wrap">
+    <article class="sheet" id="reading-sheet"></article>
+    <span class="scroll-roller" id="scroll-roller" aria-hidden="true"><i></i><i></i></span>
+  </div>
   <div class="reading-actions">
     <button class="btn btn-primary" data-action="save-image">บันทึกใบเซียมซี</button>
     <button class="btn btn-ghost" data-action="restart">เสี่ยงใหม่</button>

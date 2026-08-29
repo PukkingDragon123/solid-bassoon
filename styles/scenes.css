@@ -5,11 +5,14 @@
 .scene {
   position: fixed; inset: 0; z-index: 10;
   opacity: 0;
-  transition: opacity .85s var(--ease-out);
+  /* a touch of scale on each side of the cut gives the cross-fade some
+     direction — you arrive in a scene rather than having it appear */
+  transform: scale(1.04);
+  transition: opacity .62s var(--ease-out), transform .95s var(--ease-out);
 }
 .scene[hidden] { display: none; }
-.scene.active { opacity: 1; }
-.scene.leaving { opacity: 0; }
+.scene.active { opacity: 1; transform: none; }
+.scene.leaving { opacity: 0; transform: scale(.965); }
 
 .scene-scroll { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
 
@@ -45,6 +48,22 @@
 
 .fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 12; }
 .fx-fixed { position: fixed; z-index: 21; }
+
+/* ── zen ripple: a ring of light spreading from a touch ─────── */
+.zen-ripple {
+  position: fixed; z-index: 58; pointer-events: none;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 214, 140, .55);
+  box-shadow: 0 0 22px rgba(255, 176, 60, .38), inset 0 0 22px rgba(255, 176, 60, .22);
+  transform: translate(-50%, -50%) scale(0);
+  animation: zen-ripple 1.5s var(--ease-out) forwards;
+}
+.zen-ripple.soft { border-color: rgba(255, 214, 140, .3); box-shadow: none; }
+@keyframes zen-ripple {
+  0%   { opacity: .85; transform: translate(-50%, -50%) scale(.08) }
+  70%  { opacity: .28 }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scale(1) }
+}
 
 /* a word that floats up and fades where you tapped */
 .float-word {
@@ -365,6 +384,53 @@
   .ff-wing, .ff-glow, .hanging-bell { animation: none; }
 }
 
+/* ── ฉาก ๓ · เขย่าเซียมซี ───────────────────────────────── */
+.shake-bg {
+  position: absolute; inset: 0;
+  background-image: url(../assets/scenes/hall-bg.png);
+  background-position: center; background-size: cover; background-repeat: no-repeat;
+  /* light blur only: a heavy one hid the hall and cost real frames on phones */
+  filter: blur(5px) brightness(.66) saturate(.95);
+  transform: scale(1.05);
+}
+.tube-stage { position: absolute; inset: 0; display: grid; place-items: center; z-index: 15; }
+.tube-wrap {
+  position: relative;
+  width: 46vmin; max-width: 340px; aspect-ratio: 680 / 1080;
+  transform-origin: 50% 88%;
+  cursor: grab; touch-action: none;
+  filter: drop-shadow(0 26px 50px rgba(0, 0, 0, .68));
+  will-change: transform;
+}
+.tube-wrap:active { cursor: grabbing; }
+.tube { position: absolute; inset: 0; width: 100%; pointer-events: none; }
+/* the bundle is driven by its own spring, so it lags the cylinder */
+.tube-sticks { transform-origin: 50% 82%; will-change: transform; }
+.tube-body { z-index: 2; }
+.tube-mouth-glow {
+  position: absolute; left: 50%; top: 34%; z-index: 3;
+  width: 62%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  border-radius: 50%; opacity: 0; pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 226, 150, .85) 0%, rgba(255, 168, 50, .35) 34%, transparent 66%);
+  transition: opacity .25s;
+}
+
+.falling-stick {
+  position: absolute; left: 50%; top: 14%;
+  width: 3.4vmin; max-width: 34px; z-index: 18;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .6));
+}
+.stick-number {
+  position: absolute; z-index: 19;
+  font-family: var(--font-display); font-size: clamp(3.4rem, 15vmin, 7rem); font-weight: 700;
+  color: var(--gold-light);
+  text-shadow: 0 0 28px rgba(255, 160, 50, .85), 0 3px 10px rgba(0, 0, 0, .7);
+  opacity: 0; transform: scale(.5);
+  transition: opacity .55s var(--ease-out), transform .55s var(--ease-out);
+}
+.stick-number.show { opacity: 1; transform: scale(1); }
+
 .shake-ui { justify-content: flex-end; align-items: center; gap: 16px; }
 .shake-meter-label {
   font-family: var(--font-display); font-size: .84rem; letter-spacing: .08em;
@@ -388,6 +454,9 @@
     radial-gradient(ellipse 70% 50% at 50% 45%, rgba(255, 150, 60, .12), transparent 70%),
     linear-gradient(178deg, #1a0f08, #0a0503 78%);
 }
+/* above the cabinet, below the flying slip — otherwise the swarm is painted
+   behind the drawers and never seen */
+#fx-drawer { z-index: 16; }
 .drawer-stage { position: absolute; inset: 0; display: grid; place-items: center; z-index: 13; }
 .drawer-cabinet {
   position: relative;
@@ -442,6 +511,16 @@
   }
   .drawer-grid { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(7, 1fr); }
 }
+
+/* a shaft of light out of the drawer that actually opened */
+.drawer-beam {
+  position: absolute; z-index: 15; width: 46vmin; aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%; opacity: 0; pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 214, 140, .55) 0%, rgba(255, 168, 50, .22) 34%, transparent 68%);
+  transition: opacity .7s var(--ease-out);
+}
+.drawer-beam.on { opacity: 1; animation: door-breathe 3.4s ease-in-out infinite; }
 
 .slip-fly {
   position: absolute; z-index: 18; left: 50%; top: 50%;
