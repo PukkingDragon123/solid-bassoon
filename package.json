@@ -1,0 +1,12 @@
+{
+  "name": "sala-siamsee",
+  "version": "1.0.0",
+  "private": true,
+  "description": "เซียมซีออนไลน์ — จุดเทียน จุดธูป ตั้งจิตอธิษฐาน แล้วเขย่าเซียมซี",
+  "type": "module",
+  "scripts": {
+    "start": "node tools/serve.mjs 8080",
+    "assets": "python3 tools/render_assets.py"
+  },
+  "license": "MIT"
+}

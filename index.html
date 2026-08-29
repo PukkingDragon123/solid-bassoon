@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#160b06">
+<meta name="description" content="เซียมซีออนไลน์ — จุดเทียน จุดธูป ตั้งจิตอธิษฐาน แล้วเขย่าเซียมซี เหมือนไปวัดจริง">
+<title>ศาลาเซียมซี · เสี่ยงเซียมซีออนไลน์</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🪷</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700&family=Noto+Sans+Thai:wght@300;400;600&display=swap">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/scenes.css">
+<link rel="stylesheet" href="styles/ui.css">
+<link rel="stylesheet" href="styles/reading.css">
+</head>
+<body>
+
+<!-- ───────────────────────── loading ───────────────────────── -->
+<div id="loader" class="loader">
+  <div class="loader-ring"><svg viewBox="0 0 120 120"><circle class="lr-bg" cx="60" cy="60" r="52"/><circle class="lr-fg" cx="60" cy="60" r="52"/></svg><span class="loader-pct">0%</span></div>
+  <p class="loader-text">กำลังเดินเข้าวัด…</p>
+</div>
+
+<!-- ───────────────────────── ฉาก ๑ · หน้าวัด ───────────────────────── -->
+<section class="scene" id="scene-gate" data-scene="gate" hidden>
+  <div class="parallax" data-parallax>
+    <div class="layer l-gate-sky" data-depth="0.10"></div>
+    <div class="layer l-gate-far" data-depth="0.24"></div>
+    <div class="layer l-gate-mid" data-depth="0.50"></div>
+    <div class="layer layer-near l-gate-near" data-depth="1.00"></div>
+    <div class="door-glow"></div>
+  </div>
+  <canvas class="fx" id="fx-gate"></canvas>
+  <div class="scene-ui gate-ui">
+    <header class="title-block">
+      <p class="eyebrow">เสี่ยงทายตามแบบวัดไทย</p>
+      <h1 class="title-th">ศาลาเซียมซี</h1>
+      <p class="subtitle">จุดเทียน · จุดธูป · ตั้งจิตอธิษฐาน · เขย่าเซียมซี</p>
+    </header>
+    <div class="gate-actions">
+      <button class="btn btn-primary btn-lg" data-action="enter">
+        <span class="btn-glow"></span>เข้าวัด
+      </button>
+      <button class="btn btn-ghost" data-action="history">ใบเซียมซีที่เคยเสี่ยง</button>
+    </div>
+    <p class="hint hint-tilt">เอียงเครื่องเพื่อมองรอบ ๆ</p>
+  </div>
+</section>
+
+<!-- ───────────────────────── ฉาก ๒ · วิหาร ───────────────────────── -->
+<section class="scene" id="scene-shrine" data-scene="shrine" hidden>
+  <div class="parallax" data-parallax>
+    <div class="layer l-hall-bg" data-depth="0.16"></div>
+    <img class="prop prop-buddha" data-depth="0.34" src="assets/props/buddha.png" alt="พระประธาน">
+    <div class="buddha-aura"></div>
+    <img class="prop prop-altar" data-depth="0.62" src="assets/scenes/hall-altar.png" alt="โต๊ะหมู่บูชา">
+    <div class="altar-stage">
+      <button class="hotspot hotspot-candle" data-action="light-candle" aria-label="จุดเทียน">
+        <img src="assets/props/candle.png" alt="เทียน">
+        <span class="flame" aria-hidden="true"></span>
+      </button>
+      <img class="prop prop-censer" src="assets/props/censer.png" alt="กระถางธูป">
+      <div class="censer-drop" data-drop="censer" aria-hidden="true"></div>
+      <img class="prop prop-lotus" src="assets/props/lotus.png" alt="ดอกบัว">
+    </div>
+    <img class="prop prop-hallnear" data-depth="1.00" src="assets/scenes/hall-near.png" alt="">
+  </div>
+  <canvas class="fx" id="fx-shrine"></canvas>
+
+  <div class="incense-hand" id="incense-hand" hidden>
+    <img src="assets/props/incense.png" alt="ธูปสามดอก" id="incense-img">
+    <span class="incense-tip" aria-hidden="true"></span>
+  </div>
+
+  <div class="scene-ui shrine-ui">
+    <div class="step-caption"><span id="shrine-caption">แตะที่เทียนเพื่อจุด</span></div>
+    <div class="pray-ring" id="pray-ring" hidden>
+      <svg viewBox="0 0 120 120"><circle class="pr-bg" cx="60" cy="60" r="54"/><circle class="pr-fg" cx="60" cy="60" r="54"/></svg>
+      <p class="chant" id="chant">นะโม ตัสสะ ภะคะวะโต<br>อะระหะโต สัมมาสัมพุทธัสสะ</p>
+    </div>
+    <div class="wish-panel" id="wish-panel" hidden>
+      <h2>ตั้งจิตอธิษฐาน</h2>
+      <label class="field"><span>ชื่อ–นามสกุล</span>
+        <input id="wish-name" type="text" autocomplete="name" placeholder="เช่น สมชาย ใจดี" maxlength="60">
+      </label>
+      <label class="field"><span>สิ่งที่อยากรู้ / คำอธิษฐาน</span>
+        <textarea id="wish-text" rows="3" maxlength="200" placeholder="ขอทราบเรื่องการงานในปีนี้…"></textarea>
+      </label>
+      <button class="btn btn-primary" data-action="to-shake">น้อมจิต แล้วเขย่าเซียมซี</button>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── ฉาก ๓ · เขย่าเซียมซี ───────────────────────── -->
+<section class="scene" id="scene-shake" data-scene="shake" hidden>
+  <div class="shake-bg"></div>
+  <canvas class="fx" id="fx-shake"></canvas>
+  <div class="tube-stage" id="tube-stage">
+    <div class="tube-wrap" id="tube-wrap">
+      <img class="tube" src="assets/props/tube.png" alt="กระบอกเซียมซี" draggable="false">
+    </div>
+    <img class="falling-stick" id="falling-stick" src="assets/props/stick.png" alt="" hidden>
+    <div class="stick-number" id="stick-number" hidden></div>
+  </div>
+  <div class="scene-ui shake-ui">
+    <div class="step-caption"><span id="shake-caption">เขย่ากระบอก จนกว่าไม้เซียมซีจะหล่นออกมา</span></div>
+    <div class="shake-meter"><div class="shake-meter-fill" id="shake-fill"></div></div>
+    <button class="btn btn-ghost btn-sm" id="motion-btn" hidden>ใช้การเขย่าเครื่องจริง</button>
+  </div>
+</section>
+
+<!-- ───────────────────────── ฉาก ๔ · ตู้ใบเซียมซี ───────────────────────── -->
+<section class="scene" id="scene-drawer" data-scene="drawer" hidden>
+  <div class="drawer-room"></div>
+  <div class="drawer-stage">
+    <div class="drawer-cabinet">
+      <div class="drawer-grid" id="drawer-grid" role="list"></div>
+    </div>
+  </div>
+  <div class="slip-fly" id="slip-fly" hidden>
+    <div class="slip-face"><img src="assets/props/slip.png" alt="ใบเซียมซี"><span class="slip-peek" id="slip-peek"></span></div>
+  </div>
+  <div class="scene-ui drawer-ui">
+    <div class="step-caption"><span id="drawer-caption">กำลังหยิบใบเซียมซี…</span></div>
+    <button class="btn btn-primary" id="open-slip" hidden>เปิดอ่านคำทำนาย</button>
+  </div>
+</section>
+
+<!-- ───────────────────────── ฉาก ๕ · คำทำนาย ───────────────────────── -->
+<section class="scene scene-scroll" id="scene-reading" data-scene="reading" hidden>
+  <div class="reading-bg"></div>
+  <article class="sheet" id="reading-sheet"></article>
+  <div class="reading-actions">
+    <button class="btn btn-primary" data-action="save-image">บันทึกใบเซียมซี</button>
+    <button class="btn btn-ghost" data-action="restart">เสี่ยงใหม่</button>
+    <button class="btn btn-ghost" data-action="history">ประวัติ</button>
+  </div>
+</section>
+
+<!-- ───────────────────────── overlays ───────────────────────── -->
+<div class="sheet-modal" id="history-modal" hidden>
+  <div class="sheet-modal-inner">
+    <header><h2>ใบเซียมซีที่เคยเสี่ยง</h2><button class="icon-btn" data-action="close-history" aria-label="ปิด">✕</button></header>
+    <div id="history-list" class="history-list"></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <button class="icon-btn" id="sound-btn" aria-label="เปิด/ปิดเสียง" aria-pressed="true">♪</button>
+  <button class="icon-btn" id="home-btn" aria-label="กลับหน้าแรก" hidden>⌂</button>
+</div>
+
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="flash" id="flash" aria-hidden="true"></div>
+
+<script type="module" src="src/main.js"></script>
+<noscript><p style="color:#e8b24a;padding:2rem;text-align:center">แอปนี้ต้องเปิดใช้งาน JavaScript</p></noscript>
+</body>
+</html>

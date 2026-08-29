@@ -1,0 +1,164 @@
+/* ────────────────────────────────────────────────────────────
+   The reading — a paper slip you can actually read on a phone
+   ──────────────────────────────────────────────────────────── */
+
+.reading-bg {
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 150, 50, .16), transparent 60%),
+    linear-gradient(178deg, #1d0e07, #0d0503 70%);
+}
+.reading-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: url(../assets/scenes/hall-bg.png);
+  background-position: center; background-size: cover; background-repeat: no-repeat;
+  filter: blur(24px) brightness(.3) saturate(.8);
+  opacity: .5;
+}
+
+.sheet {
+  position: relative; z-index: 14;
+  width: min(600px, 92vw);
+  margin: calc(var(--safe-t) + 74px) auto 190px;
+  padding: 2.4rem 1.8rem 2rem;
+  color: var(--paper-ink);
+  background-color: #f6ecd6;
+  background-image: url(../assets/tex/paper.png);
+  background-size: 340px 340px;
+  border-radius: 4px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, .7), 0 2px 0 rgba(255, 255, 255, .35) inset;
+  animation: sheet-open .8s var(--ease-out);
+}
+@keyframes sheet-open {
+  from { opacity: 0; transform: translateY(38px) rotateX(12deg); }
+  to   { opacity: 1; transform: none; }
+}
+/* torn top and bottom edges */
+.sheet::before, .sheet::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 10px;
+  background:
+    radial-gradient(circle at 6px -3px, transparent 6px, #f6ecd6 6px) repeat-x 0 0 / 12px 10px;
+}
+.sheet::before { top: -1px; transform: scaleY(-1); }
+.sheet::after  { bottom: -1px; }
+
+.sheet-rule {
+  position: absolute; inset: 12px;
+  border: 1px solid rgba(168, 42, 32, .55);
+  border-radius: 3px; pointer-events: none;
+}
+.sheet-rule::after {
+  content: ''; position: absolute; inset: 5px;
+  border: 1px solid rgba(168, 42, 32, .3); border-radius: 2px;
+}
+
+.sheet-head { text-align: center; position: relative; padding-bottom: 1.2rem; }
+.sheet-kicker { font-size: .76rem; letter-spacing: .4em; text-indent: .4em; color: rgba(168, 42, 32, .8); }
+.sheet-number {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(3.6rem, 17vmin, 5.6rem); line-height: 1;
+  color: #a82a20; margin: .2rem 0 .1rem;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, .6);
+}
+.sheet-number small { display: block; font-size: .9rem; letter-spacing: .3em; color: rgba(90, 40, 20, .6); font-weight: 400; }
+.sheet-title { font-size: clamp(1.4rem, 5.6vmin, 1.95rem); color: #4a1c10; letter-spacing: .03em; }
+
+.seal {
+  position: absolute; top: 4px; right: 8px;
+  width: 68px; height: 68px; display: grid; place-content: center;
+  border: 2.5px solid currentColor; border-radius: 8px;
+  transform: rotate(-13deg);
+  font-family: var(--font-display); font-weight: 700; font-size: .84rem; line-height: 1.25;
+  text-align: center; letter-spacing: .04em;
+  opacity: .82;
+}
+.seal::after {
+  content: ''; position: absolute; inset: 4px;
+  border: 1px solid currentColor; border-radius: 5px; opacity: .55;
+}
+.seal[data-level='excellent'] { color: #b8860b; }
+.seal[data-level='good']      { color: #2e7d5b; }
+.seal[data-level='fair']      { color: #46567f; }
+.seal[data-level='caution']   { color: #a8482c; }
+
+.verse {
+  margin: 1.4rem 0;
+  padding: 1.15rem 1.2rem;
+  background: rgba(168, 42, 32, .055);
+  border-left: 3px solid rgba(168, 42, 32, .5);
+  border-right: 3px solid rgba(168, 42, 32, .5);
+  border-radius: 3px;
+}
+.verse p {
+  font-family: var(--font-display); font-size: clamp(.98rem, 4vmin, 1.12rem);
+  line-height: 2.05; color: #3d1a0e; white-space: pre-wrap;
+  text-align: center; letter-spacing: .02em;
+}
+
+.summary {
+  font-size: clamp(.95rem, 3.9vmin, 1.03rem); line-height: 2;
+  color: #35200f; text-align: justify; text-indent: 2.2em;
+  user-select: text;
+}
+
+.aspects { margin-top: 1.6rem; display: grid; gap: .5rem; }
+.aspect {
+  display: grid; grid-template-columns: 30px 1fr; gap: .7rem; align-items: start;
+  padding: .72rem .8rem; border-radius: 6px;
+  background: rgba(90, 45, 20, .045);
+  border: 1px solid rgba(120, 60, 25, .12);
+}
+.aspect-icon {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: grid; place-content: center;
+  background: linear-gradient(168deg, #e8c98a, #b8862f);
+  color: #3a1f05; font-size: .88rem;
+}
+.aspect-label { font-family: var(--font-display); font-size: .88rem; color: #8e2318; letter-spacing: .06em; }
+.aspect-text { font-size: .93rem; line-height: 1.8; color: #3a2412; margin-top: .1rem; user-select: text; }
+
+.charm {
+  margin-top: 1.5rem; padding: 1.05rem 1.1rem;
+  border-radius: 6px; border: 1px dashed rgba(168, 42, 32, .45);
+  background: rgba(232, 178, 74, .10);
+}
+.charm h3 { font-size: .95rem; color: #8e2318; letter-spacing: .07em; margin-bottom: .4rem; }
+.charm p { font-size: .93rem; line-height: 1.85; color: #3a2412; user-select: text; }
+
+.lucky { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+.chip {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .42rem .9rem; border-radius: 99px;
+  font-size: .85rem; font-family: var(--font-display);
+  background: rgba(142, 35, 24, .09);
+  border: 1px solid rgba(142, 35, 24, .26);
+  color: #6a2010;
+}
+.chip b { font-weight: 700; color: #8e2318; }
+
+.wish-echo {
+  margin-top: 1.4rem; padding-top: 1rem;
+  border-top: 1px solid rgba(120, 60, 25, .2);
+  font-size: .88rem; color: rgba(58, 36, 18, .8); line-height: 1.8;
+}
+.wish-echo b { color: #8e2318; font-family: var(--font-display); }
+
+.disclaimer {
+  margin-top: 1.5rem; text-align: center;
+  font-size: .76rem; line-height: 1.7; color: rgba(90, 60, 35, .62);
+}
+
+.reading-actions {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 22;
+  display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center;
+  padding: 1rem 1rem calc(var(--safe-b) + 1rem);
+  background: linear-gradient(to top, rgba(10, 5, 2, .95) 40%, transparent);
+}
+
+.reading-corner {
+  position: absolute; width: 54px; opacity: .5; pointer-events: none;
+}
+.reading-corner.tl { top: 16px; left: 16px; }
+.reading-corner.tr { top: 16px; right: 16px; transform: scaleX(-1); }
+.reading-corner.bl { bottom: 16px; left: 16px; transform: scaleY(-1); }
+.reading-corner.br { bottom: 16px; right: 16px; transform: scale(-1); }
