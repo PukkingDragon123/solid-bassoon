@@ -164,6 +164,28 @@
 </section>
 
 <!-- ───────────────────────── overlays ───────────────────────── -->
+<!-- ตู้บริจาค · the donation box shown on the way in -->
+<div class="sheet-modal pay-modal" id="pay-modal" hidden>
+  <div class="pay-box">
+    <img class="pay-corner tl" src="assets/props/kanok-corner.png" alt="">
+    <img class="pay-corner tr" src="assets/props/kanok-corner.png" alt="">
+    <header class="pay-head">
+      <p class="eyebrow">ก่อนเข้าวัด</p>
+      <h2>ทำบุญค่าเข้าวัด</h2>
+      <p class="pay-sub" id="pay-sub">ทำบุญตามกำลังศรัทธา</p>
+    </header>
+    <figure class="pay-qr">
+      <img id="pay-qr-img" src="" alt="คิวอาร์โค้ดพร้อมเพย์สำหรับทำบุญ">
+    </figure>
+    <p class="pay-payee">ผู้รับ · <b id="pay-payee"></b></p>
+    <p class="pay-hint">สแกนด้วยแอปธนาคาร หรือทรูมันนี่ วอลเล็ท</p>
+    <div class="pay-actions">
+      <button class="btn btn-primary btn-lg" data-action="paid"><span class="btn-glow"></span>ทำบุญแล้ว · เข้าวัด</button>
+      <button class="btn btn-ghost btn-sm" data-action="pay-later" id="pay-later">ไว้คราวหน้า</button>
+    </div>
+  </div>
+</div>
+
 <div class="sheet-modal" id="history-modal" hidden>
   <div class="sheet-modal-inner">
     <header><h2>ใบเซียมซีที่เคยเสี่ยง</h2><button class="icon-btn" data-action="close-history" aria-label="ปิด">✕</button></header>

@@ -10,7 +10,8 @@ import { createDrawer } from './scenes/drawer.js';
 import { createReading } from './scenes/reading.js';
 import * as audio from './audio.js';
 import * as haptics from './haptics.js';
-import { prefs, savePrefs, getHistory, formatDate, resetRitual, lastDrawToday } from './state.js';
+import { prefs, savePrefs, getHistory, formatDate, resetRitual, lastDrawToday, hasPaid, markPaid } from './state.js';
+import { PAYMENT } from './config.js';
 import { LEVELS, toThaiNumber } from './data/fortunes.js';
 
 const loader = document.getElementById('loader');
@@ -117,6 +118,67 @@ function wireChrome() {
     historyModal.hidden = true;
     go('reading', { fortune: Number(item.dataset.n), history: entry });
   });
+
+  // ── ตู้บริจาค: the donation box on the way in ────────────
+  const payModal = document.getElementById('pay-modal');
+  const enterBtn = document.querySelector('[data-action="enter"]');
+  let payResolve = null;
+
+  if (PAYMENT.enabled) {
+    document.getElementById('pay-qr-img').src = PAYMENT.qr;
+    const payeeLine = document.querySelector('.pay-payee');
+    if (PAYMENT.payee) document.getElementById('pay-payee').textContent = PAYMENT.payee;
+    else payeeLine.hidden = true;
+    document.getElementById('pay-sub').textContent = PAYMENT.amount
+      ? `ค่าเข้าวัด ${PAYMENT.amount}`
+      : 'ทำบุญตามกำลังศรัทธา';
+    document.getElementById('pay-later').hidden = PAYMENT.required;
+
+    const closePay = (paid) => {
+      payModal.hidden = true;
+      if (paid) markPaid();
+      const done = payResolve;
+      payResolve = null;
+      done?.(paid);
+    };
+    payModal.querySelector('[data-action="paid"]').addEventListener('click', () => {
+      audio.unlock();
+      audio.chime();
+      closePay(true);
+    });
+    payModal.querySelector('[data-action="pay-later"]').addEventListener('click', () => closePay(false));
+    payModal.addEventListener('click', (e) => {
+      if (e.target === payModal && !PAYMENT.required) closePay(false);
+    });
+  }
+
+  /** Resolves true when the visitor may go in. */
+  function askForDonation() {
+    if (!PAYMENT.enabled || hasPaid()) return Promise.resolve(true);
+    payModal.hidden = false;
+    return new Promise((resolve) => { payResolve = resolve; });
+  }
+
+  // Intercept "เข้าวัด" in the capture phase so the gate scene's own handler
+  // only runs once the visitor is through the box.  `letThrough` stops the
+  // re-dispatched click from bouncing back into this same handler forever.
+  let letThrough = false;
+  enterBtn.addEventListener(
+    'click',
+    (e) => {
+      if (letThrough) { letThrough = false; return; }
+      if (!PAYMENT.enabled || hasPaid()) return;
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      askForDonation().then((ok) => {
+        if (ok || !PAYMENT.required) {
+          letThrough = true;
+          enterBtn.click();
+        }
+      });
+    },
+    { capture: true },
+  );
 
   // ── gentle nudge: tradition says one slip a day ──────────
   document.querySelector('[data-action="enter"]').addEventListener('click', () => {

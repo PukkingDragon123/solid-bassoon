@@ -1,9 +1,11 @@
 /** App state and the little that survives a reload. */
 
 import { FORTUNES } from './data/fortunes.js';
+import { PAYMENT } from './config.js';
 
 const HISTORY_KEY = 'salasiamsee.history.v1';
 const PREFS_KEY = 'salasiamsee.prefs.v1';
+const PAID_KEY = 'salasiamsee.paid.v1';
 const MAX_HISTORY = 40;
 
 function read(key, fallback) {
@@ -76,6 +78,21 @@ export function addHistory(entry) {
 export function lastDrawToday() {
   const today = new Date().toDateString();
   return getHistory().find((e) => new Date(e.at).toDateString() === today) ?? null;
+}
+
+/**
+ * Whether the visitor has already been through the donation box recently.
+ * A convenience so regulars are not asked every visit — it is not, and cannot
+ * be, proof that anything was actually paid.
+ */
+export function hasPaid() {
+  const at = Number(read(PAID_KEY, 0));
+  if (!at) return false;
+  return (Date.now() - at) / 86400000 < (PAYMENT.rememberDays ?? 30);
+}
+
+export function markPaid() {
+  write(PAID_KEY, Date.now());
 }
 
 export function resetRitual() {

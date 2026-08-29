@@ -9,6 +9,37 @@ plant the incense, then shake the bamboo tube until a stick falls out.
 
 ---
 
+## ตู้บริจาค · The donation box
+
+ก่อนเข้าวัดจะมีตู้บริจาคขึ้นมาให้สแกน QR พร้อมเพย์ทำบุญก่อน ตั้งค่าได้ที่ `src/config.js`:
+
+```js
+export const PAYMENT = {
+  enabled: true,        // ปิดได้ด้วย false
+  required: true,       // false = มีปุ่ม "ไว้คราวหน้า" ให้ข้าม
+  rememberDays: 30,     // ถามซ้ำหลังผ่านไปกี่วัน (0 = ถามทุกครั้ง)
+  qr: 'assets/pay/promptpay-qr.jpg',
+  payee: 'ดรากร หวานสนิท',
+  amount: '',           // ว่าง = ตามกำลังศรัทธา, หรือใส่ '๒๐ บาท'
+};
+```
+
+> **สิ่งที่ต้องรู้ก่อนใช้จริง.** แอปนี้เป็นหน้าเว็บ static ล้วน ๆ ไม่มีเซิร์ฟเวอร์
+> **ตู้บริจาคนี้กั้นอะไรไม่ได้จริง** — ใครก็ตามที่เปิด devtools หรืออ่านซอร์ส
+> ก็ข้ามได้ในไม่กี่วินาที และแอปไม่มีทางรู้ว่าโอนเงินมาจริงหรือเปล่า
+> ให้คิดว่าเป็น **ตู้บริจาคแบบให้ตามศรัทธา** ไม่ใช่ระบบเก็บเงิน
+> ถ้าต้องการบังคับจ่ายจริง ต้องมีเซิร์ฟเวอร์ที่ตรวจสลิป/ตรวจยอดโอนก่อนปล่อยไฟล์แอปออกไป
+>
+> อีกข้อ: repo นี้เป็น **public** ดังนั้นไฟล์ QR และชื่อผู้รับที่อยู่บนภาพ
+> เปิดให้ใครก็เห็นได้ ถ้าไม่ต้องการแบบนั้น ให้ตั้ง repo เป็น private
+> หรือเอา QR ออกแล้วตั้ง `enabled: false`
+
+This is deliberately an honour-system box, not access control: a static page cannot
+verify a transfer, and anything the page checks the visitor can skip. Set
+`enabled: false` to remove it entirely.
+
+---
+
 ## เล่นเลย · Run it
 
 ```bash

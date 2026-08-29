@@ -155,3 +155,47 @@
 }
 @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 14px) } to { opacity: 1; transform: translate(-50%, 0) } }
 .toast.out { opacity: 0; transform: translate(-50%, 14px); transition: opacity .4s, transform .4s; }
+
+
+/* ────────────────────────────────────────────────────────────
+   ตู้บริจาค — the donation box on the way into the temple
+   ──────────────────────────────────────────────────────────── */
+
+.pay-modal { place-items: center; padding: 1rem; }
+.pay-box {
+  position: relative;
+  width: min(400px, 92vw); max-height: 92vh; overflow-y: auto;
+  display: grid; gap: .85rem; justify-items: center; text-align: center;
+  padding: 1.6rem 1.4rem 1.4rem;
+  border-radius: var(--r-lg);
+  background:
+    linear-gradient(168deg, rgba(64, 34, 15, .97), rgba(30, 15, 7, .98));
+  border: 1px solid rgba(232, 178, 74, .38);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, .78), inset 0 1px 0 rgba(255, 220, 150, .18);
+  animation: panel-rise .55s var(--ease-out);
+}
+.pay-corner { position: absolute; width: 52px; opacity: .48; pointer-events: none; }
+.pay-corner.tl { top: 10px; left: 10px; }
+.pay-corner.tr { top: 10px; right: 10px; transform: scaleX(-1); }
+
+.pay-head h2 {
+  font-size: 1.5rem; letter-spacing: .04em;
+  background: linear-gradient(178deg, #fff6d8 6%, #ffdf92 34%, #e0a938 66%, #ffe9b0 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: var(--gold);
+}
+.pay-sub { font-size: .92rem; color: rgba(246, 236, 214, .74); margin-top: .3rem; }
+
+.pay-qr {
+  margin: .2rem 0 0; padding: 10px;
+  border-radius: 12px; background: #fff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .5), 0 0 0 2px rgba(232, 178, 74, .55);
+}
+.pay-qr img { width: min(248px, 62vw); height: auto; border-radius: 6px; display: block; }
+
+.pay-payee { font-size: .9rem; color: rgba(246, 236, 214, .72); }
+.pay-payee b { color: var(--gold-light); font-family: var(--font-display); }
+.pay-hint { font-size: .8rem; color: rgba(246, 236, 214, .44); line-height: 1.6; }
+
+.pay-actions { display: grid; gap: .5rem; justify-items: center; width: 100%; margin-top: .3rem; }
+.pay-actions .btn-lg { width: 100%; }
