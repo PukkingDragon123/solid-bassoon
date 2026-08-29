@@ -6,12 +6,21 @@
  * stick drops and its number is the reading.
  */
 
-import { FX, dustSpec } from '../fx.js';
+import { FX, dustSpec, emberSpec } from '../fx.js';
 import * as audio from '../audio.js';
 import * as haptics from '../haptics.js';
 import { go } from '../router.js';
 import { state, drawFortune } from '../state.js';
 import { toThaiNumber } from '../data/fortunes.js';
+
+// what the meter says as the energy climbs — silence for eight seconds of
+// shaking feels like the app has stopped listening
+const MILESTONES = [
+  [0.00, ''],
+  [0.22, 'เขย่าต่อ… ไม้เริ่มขยับแล้ว'],
+  [0.50, 'ใกล้แล้ว อย่าเพิ่งหยุด'],
+  [0.78, 'อีกนิดเดียว!'],
+];
 
 const NEEDED = 100;
 const DECAY = 22;          // energy bled off per second, so it takes real effort
@@ -27,6 +36,9 @@ export function createShake() {
   const stick = document.getElementById('falling-stick');
   const numEl = document.getElementById('stick-number');
   const motionBtn = document.getElementById('motion-btn');
+  const label = document.getElementById('shake-label');
+  const firefly = document.getElementById('firefly');
+  const stage = document.getElementById('tube-stage');
 
   let energy = 0;
   let dropped = false;
@@ -38,6 +50,8 @@ export function createShake() {
   let lastRattle = 0;
   let motionOn = false;
   let lastAcc = null;
+  let fireflyTimer = 0;
+  let fireflyAway = false;
 
   const addEnergy = (amount) => {
     if (dropped) return;
@@ -54,6 +68,12 @@ export function createShake() {
     // the tube leans harder the more it is worked
     const lean = (Math.random() - 0.5) * (6 + pct * 16);
     wrap.style.transform = `rotate(${lean.toFixed(1)}deg) translateY(${(-pct * 8).toFixed(1)}px)`;
+
+    const stage_ = MILESTONES.filter(([at]) => pct >= at).pop();
+    if (stage_ && label.textContent !== stage_[1]) label.textContent = stage_[1];
+
+    // the firefly will not sit still on a tube being shaken
+    if (pct > 0.06 && !fireflyAway) scareFirefly();
 
     if (energy >= NEEDED) drop();
   };
@@ -126,9 +146,62 @@ export function createShake() {
   }
   motionBtn.addEventListener('click', enableMotion);
 
+  // ── หิ่งห้อย: a firefly that keeps you company ───────────────
+  function fireflyPerch() {
+    const r = wrap.getBoundingClientRect();
+    const s_ = stage.getBoundingClientRect();
+    if (!r.width) return;
+    // pick a spot on the tube's body, in stage-relative coordinates
+    firefly.style.left = `${r.left - s_.left + r.width * (0.18 + Math.random() * 0.64)}px`;
+    firefly.style.top = `${r.top - s_.top + r.height * (0.42 + Math.random() * 0.46)}px`;
+  }
+
+  function fireflyArrive(delay = 1400) {
+    clearTimeout(fireflyTimer);
+    fireflyTimer = setTimeout(() => {
+      if (dropped) return;
+      fireflyAway = false;
+      firefly.hidden = false;
+      firefly.classList.remove('away');
+      fireflyPerch();
+      wander();
+    }, delay);
+  }
+
+  let wanderTimer = 0;
+  function wander() {
+    clearTimeout(wanderTimer);
+    wanderTimer = setTimeout(() => {
+      if (!fireflyAway && !dropped) {
+        fireflyPerch();
+        wander();
+      }
+    }, 2600 + Math.random() * 2400);
+  }
+
+  function scareFirefly(tapped = false) {
+    if (fireflyAway || firefly.hidden) return;
+    fireflyAway = true;
+    clearTimeout(wanderTimer);
+    const r = firefly.getBoundingClientRect();
+    fx.burst(emberSpec(() => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 })), tapped ? 14 : 6);
+    if (tapped) { audio.chime(); haptics.light(); }
+    firefly.classList.add('away');
+    firefly.style.left = `${(Math.random() > 0.5 ? 1.15 : -0.15) * stage.clientWidth}px`;
+    firefly.style.top = `${stage.clientHeight * (0.1 + Math.random() * 0.4)}px`;
+    setTimeout(() => { firefly.hidden = true; }, 950);
+    if (!dropped) fireflyArrive(4200 + Math.random() * 3600);
+  }
+
+  firefly.addEventListener('click', (e) => { e.stopPropagation(); scareFirefly(true); });
+
   // ── the drop ────────────────────────────────────────────────
   function drop() {
     dropped = true;
+    clearTimeout(fireflyTimer);
+    clearTimeout(wanderTimer);
+    scareFirefly();
+    label.textContent = '';
     const fortune = drawFortune();
     state.fortune = fortune;
 
@@ -170,10 +243,14 @@ export function createShake() {
       raf = requestAnimationFrame(tick);
       wrap.classList.add('idle');
       if (!motionOn && window.DeviceMotionEvent) motionBtn.hidden = false;
+      if (!dropped) fireflyArrive(1600);
     },
     exit() {
       fx.stop();
       cancelAnimationFrame(raf);
+      clearTimeout(fireflyTimer);
+      clearTimeout(wanderTimer);
+      firefly.hidden = true;
     },
     reset() {
       energy = 0;
@@ -186,6 +263,10 @@ export function createShake() {
       stick.getAnimations().forEach((a) => a.cancel());
       numEl.hidden = true;
       numEl.classList.remove('show');
+      label.textContent = '';
+      firefly.hidden = true;
+      firefly.classList.remove('away');
+      fireflyAway = false;
       caption.textContent = 'เขย่ากระบอก จนกว่าไม้เซียมซีจะหล่นออกมา';
     },
   };

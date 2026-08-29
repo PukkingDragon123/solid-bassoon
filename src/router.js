@@ -48,6 +48,17 @@ export function flash() {
   el.classList.add('fire');
 }
 
+/** A word that floats up from a point on screen and fades. */
+export function floatWord(text, x, y) {
+  const el = document.createElement('div');
+  el.className = 'float-word';
+  el.textContent = text;
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1600);
+}
+
 export function toast(message, ms = 2600) {
   const el = document.createElement('div');
   el.className = 'toast';

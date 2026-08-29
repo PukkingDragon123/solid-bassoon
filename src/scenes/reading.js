@@ -2,6 +2,7 @@
  * ฉาก ๕ · คำทำนาย — the slip, typeset for reading, and saveable as an image.
  */
 
+import { FX, emberSpec, goldRainSpec } from '../fx.js';
 import * as audio from '../audio.js';
 import * as haptics from '../haptics.js';
 import { go, toast } from '../router.js';
@@ -66,7 +67,11 @@ export function renderSheet(fortune, { name, wish, at } = {}) {
 export function createReading() {
   const el = document.getElementById('scene-reading');
   const sheet = document.getElementById('reading-sheet');
+  const fx = new FX(document.getElementById('fx-reading'));
   let shown = null;
+
+  // how much gold rains down depends on what you drew
+  const BURST = { excellent: 90, good: 52, fair: 26, caution: 12 };
 
   el.querySelector('[data-action="restart"]').addEventListener('click', () => {
     haptics.tap();
@@ -108,11 +113,28 @@ export function createReading() {
       setTimeout(() => audio.bell(), 400);
       haptics.success();
 
+      fx.clear();
+      fx.start();
+      const n = BURST[f.level] ?? 20;
+      const rain = goldRainSpec(() => fx.w);
+      let poured = 0;
+      const pour = setInterval(() => {
+        fx.burst(rain, 3);
+        poured += 3;
+        if (poured >= n) clearInterval(pour);
+      }, 70);
+      fx.burst(emberSpec(() => ({ x: fx.w / 2, y: fx.h * 0.30 })), Math.round(n / 4));
+      if (f.level === 'excellent') setTimeout(() => audio.gong(), 900);
+      setTimeout(() => { clearInterval(pour); fx.stop(); }, 3000 + (n / 3) * 70 + 4000);
+
       if (!opts.fortune) {
         addHistory({ n: f.n, level: f.level, title: f.title, name: state.name, wish: state.wish, at: meta.at });
       }
     },
-    exit() {},
+    exit() {
+      fx.stop();
+      fx.clear();
+    },
   };
 }
 

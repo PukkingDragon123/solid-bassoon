@@ -219,6 +219,35 @@ export function emberSpec(getOrigin, opts = {}) {
   };
 }
 
+/** Gold raining down the frame — the celebration when a slip is revealed. */
+export function goldRainSpec(w, opts = {}) {
+  return {
+    kind: 'gold',
+    rate: opts.rate ?? 0,
+    make() {
+      const spin = (Math.random() - 0.5) * 5;
+      return {
+        x: Math.random() * w(),
+        y: -30 - Math.random() * 120,
+        vx: (Math.random() - 0.5) * 40,
+        vy: 90 + Math.random() * 150,
+        rot: Math.random() * Math.PI,
+        size: 7 + Math.random() * 13,
+        life: 4.2 + Math.random() * 2.4,
+        blend: 'screen',
+        alpha: (t) => Math.min(1, t * 8) * (1 - t) ** 0.7,
+        update(p, dt) {
+          p.x += (p.vx + Math.sin((p.age + spin) * 2.2) * 26) * dt;
+          p.y += p.vy * dt;
+          p.vy += 34 * dt;
+          p.rot += spin * dt;
+        },
+        draw: (ctx, p) => drawSprite(ctx, p, 'ember', '#ffd06a'),
+      };
+    },
+  };
+}
+
 /** Motes hanging in a shaft of light. */
 export function dustSpec(w, h, opts = {}) {
   return {

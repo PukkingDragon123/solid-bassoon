@@ -65,6 +65,12 @@
       <div class="censer-drop" data-drop="censer" aria-hidden="true"></div>
       <img class="prop prop-lotus" src="assets/props/lotus.png" alt="ดอกบัว">
     </div>
+    <button class="hanging-bell" id="hanging-bell" aria-label="ตีระฆัง">
+      <span class="bell-rope"></span>
+      <img src="assets/props/bell.png" alt="ระฆัง">
+      <span class="bell-ring" aria-hidden="true"></span>
+      <span class="bell-ring bell-ring-2" aria-hidden="true"></span>
+    </button>
     <img class="prop prop-hallnear" data-depth="1.00" src="assets/scenes/hall-near.png" alt="">
   </div>
   <canvas class="fx" id="fx-shrine"></canvas>
@@ -76,9 +82,15 @@
 
   <div class="scene-ui shrine-ui">
     <div class="step-caption"><span id="shrine-caption">แตะที่เทียนเพื่อจุด</span></div>
+    <div class="chant-stage" id="chant-stage" hidden>
+      <p class="chant-hint">ว่าตามในใจ หรือออกเสียงเบา ๆ</p>
+      <div class="chant-now" id="chant-now" aria-live="polite"></div>
+      <div class="chant-line" id="chant-line"></div>
+      <p class="chant-round" id="chant-round"></p>
+    </div>
     <div class="pray-ring" id="pray-ring" hidden>
       <svg viewBox="0 0 120 120"><circle class="pr-bg" cx="60" cy="60" r="54"/><circle class="pr-fg" cx="60" cy="60" r="54"/></svg>
-      <p class="chant" id="chant">นะโม ตัสสะ ภะคะวะโต<br>อะระหะโต สัมมาสัมพุทธัสสะ</p>
+      <span class="pray-hold" id="pray-hold">กดค้าง</span>
     </div>
     <div class="wish-panel" id="wish-panel" hidden>
       <h2>ตั้งจิตอธิษฐาน</h2>
@@ -101,11 +113,15 @@
     <div class="tube-wrap" id="tube-wrap">
       <img class="tube" src="assets/props/tube.png" alt="กระบอกเซียมซี" draggable="false">
     </div>
+    <button class="firefly" id="firefly" aria-label="หิ่งห้อย" hidden>
+      <i class="ff-glow"></i><i class="ff-wing ff-wing-l"></i><i class="ff-wing ff-wing-r"></i><i class="ff-body"></i>
+    </button>
     <img class="falling-stick" id="falling-stick" src="assets/props/stick.png" alt="" hidden>
     <div class="stick-number" id="stick-number" hidden></div>
   </div>
   <div class="scene-ui shake-ui">
     <div class="step-caption"><span id="shake-caption">เขย่ากระบอก จนกว่าไม้เซียมซีจะหล่นออกมา</span></div>
+    <p class="shake-meter-label" id="shake-label"></p>
     <div class="shake-meter"><div class="shake-meter-fill" id="shake-fill"></div></div>
     <button class="btn btn-ghost btn-sm" id="motion-btn" hidden>ใช้การเขย่าเครื่องจริง</button>
   </div>
@@ -131,6 +147,7 @@
 <!-- ───────────────────────── ฉาก ๕ · คำทำนาย ───────────────────────── -->
 <section class="scene scene-scroll" id="scene-reading" data-scene="reading" hidden>
   <div class="reading-bg"></div>
+  <canvas class="fx fx-fixed" id="fx-reading"></canvas>
   <article class="sheet" id="reading-sheet"></article>
   <div class="reading-actions">
     <button class="btn btn-primary" data-action="save-image">บันทึกใบเซียมซี</button>

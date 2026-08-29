@@ -4,7 +4,7 @@
 
 import * as audio from '../audio.js';
 import * as haptics from '../haptics.js';
-import { go } from '../router.js';
+import { go, toast } from '../router.js';
 import { state } from '../state.js';
 import { FORTUNES, toThaiNumber } from '../data/fortunes.js';
 
@@ -28,6 +28,26 @@ export function createDrawer() {
     front.textContent = toThaiNumber(f.n);
     cell.appendChild(front);
     grid.appendChild(cell);
+  });
+
+  // poking a drawer that is not yours is half the fun of a real cabinet
+  const REFUSALS = [
+    'ลิ้นชักนี้ยังไม่ใช่ของท่าน',
+    'ไม้เซียมซีชี้ไปที่อีกใบหนึ่ง',
+    'อย่าแอบเปิดสิ เดี๋ยวไม่ขลัง',
+    'ใบของท่านเรืองแสงอยู่ตรงนั้นแล้ว',
+  ];
+  let refusal = 0;
+  grid.addEventListener('click', (e) => {
+    const cell = e.target.closest('.drawer-cell');
+    if (!cell || cell.classList.contains('open')) return;
+    cell.classList.remove('nudge');
+    void cell.offsetWidth;
+    cell.classList.add('nudge');
+    audio.clack(0.35);
+    haptics.tap();
+    toast(REFUSALS[refusal % REFUSALS.length], 1900);
+    refusal += 1;
   });
 
   openBtn.addEventListener('click', () => {

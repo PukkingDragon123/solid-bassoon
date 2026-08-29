@@ -8,10 +8,16 @@ import { FX, smokeSpec, emberSpec, dustSpec } from '../fx.js';
 import { Parallax } from '../parallax.js';
 import * as audio from '../audio.js';
 import * as haptics from '../haptics.js';
-import { go, flash } from '../router.js';
+import { go, flash, floatWord } from '../router.js';
 import { state } from '../state.js';
+import { toThaiNumber } from '../data/fortunes.js';
 
-const PRAY_MS = 3400;
+// บทนะโม, said three times over — one word per beat, so the app can prompt
+// the visitor word by word instead of showing a wall of text.
+const CHANT = ['นะโม', 'ตัสสะ', 'ภะคะวะโต', 'อะระหะโต', 'สัมมาสัมพุทธัสสะ'];
+const ROUNDS = 3;
+const BEAT_MS = 560;
+const PRAY_MS = CHANT.length * ROUNDS * BEAT_MS;
 
 const CAPTIONS = {
   candle: 'แตะที่เทียนเพื่อจุด',
@@ -33,16 +39,27 @@ export function createShrine() {
   const caption = document.getElementById('shrine-caption');
   const prayRing = document.getElementById('pray-ring');
   const prayFg = prayRing.querySelector('.pr-fg');
-  const chant = document.getElementById('chant');
+  const chantStage = document.getElementById('chant-stage');
+  const chantNow = document.getElementById('chant-now');
+  const chantLine = document.getElementById('chant-line');
+  const chantRound = document.getElementById('chant-round');
+  const bell = document.getElementById('hanging-bell');
   const wishPanel = document.getElementById('wish-panel');
+
+  // the reference line under the prompter
+  chantLine.innerHTML = CHANT.map((wd) => `<span>${wd}</span>`).join('');
+  const lineWords = [...chantLine.children];
 
   let step = 'candle';
   let handPos = { x: 0, y: 0 };
   let dragging = false;
   let candleSmoke = null;
   let censerSmoke = null;
-  let prayStart = 0;
+  let prayElapsed = 0;
+  let prayTick = 0;
   let prayTimer = null;
+  let lastBeat = -1;
+  let prayBaseY = 0;
 
   const setStep = (s) => {
     step = s;
@@ -137,6 +154,8 @@ export function createShrine() {
     fx.emit(smokeSpec(handTipOrigin, { rate: 7, scale: 0.72, opacity: 0.26 }));
     setStep('pray');
     prayRing.hidden = false;
+    chantStage.hidden = false;
+    chantRound.textContent = `จบที่ ${toThaiNumber(1)} ใน ${toThaiNumber(ROUNDS)}`;
   }
 
   function plantIncense() {
@@ -154,43 +173,78 @@ export function createShrine() {
     }, 700);
   }
 
-  // ── step 3: hold to pray ────────────────────────────────────
+  // ── step 3: hold and chant along ────────────────────────────
+  function showBeat(beat) {
+    const round = Math.floor(beat / CHANT.length);
+    const idx = beat % CHANT.length;
+    if (round >= ROUNDS) return;
+
+    // the word rises through the middle of the screen and dissolves
+    const word = document.createElement('div');
+    word.className = 'chant-word';
+    word.textContent = CHANT[idx];
+    chantNow.appendChild(word);
+    setTimeout(() => word.remove(), 1000);
+
+    lineWords.forEach((el_, i) => {
+      el_.classList.toggle('on', i === idx);
+      el_.classList.toggle('said', i < idx);
+    });
+    chantRound.textContent = `จบที่ ${toThaiNumber(round + 1)} ใน ${toThaiNumber(ROUNDS)}`;
+    haptics.light();
+    if (idx === 0 && round > 0) audio.chime();
+  }
+
   const startPray = (e) => {
     if (step !== 'pray' || prayTimer) return;
     e.preventDefault();
-    prayStart = performance.now();
-    chant.classList.add('on');
-    const baseY = handPos.y;
+    prayTick = performance.now();
+    prayBaseY = prayBaseY || handPos.y;
+    prayRing.classList.add('holding');
+    audio.unlock();
+
     prayTimer = setInterval(() => {
-      const t = Math.min((performance.now() - prayStart) / PRAY_MS, 1);
+      const now = performance.now();
+      prayElapsed += now - prayTick;
+      prayTick = now;
+      const t = Math.min(prayElapsed / PRAY_MS, 1);
       prayFg.style.strokeDashoffset = String(339 * (1 - t));
       // the incense rises to the forehead as the prayer completes
-      moveHand(handPos.x, baseY - t * 70);
-      if (t >= 0.34 && t < 0.36) haptics.light();
-      if (t >= 0.67 && t < 0.69) haptics.light();
+      moveHand(handPos.x, prayBaseY - t * 70);
+
+      const beat = Math.floor(prayElapsed / BEAT_MS);
+      if (beat !== lastBeat && beat < CHANT.length * ROUNDS) {
+        lastBeat = beat;
+        showBeat(beat);
+      }
       if (t >= 1) endPray(true);
     }, 40);
   };
 
+  // Releasing pauses rather than resets — losing eight seconds of chanting to
+  // a slipped finger would be miserable.
   const cancelPray = () => {
     if (!prayTimer || step !== 'pray') return;
-    endPray(false);
+    clearInterval(prayTimer);
+    prayTimer = null;
+    prayRing.classList.remove('holding');
+    lineWords.forEach((el_) => el_.classList.remove('on'));
   };
 
   function endPray(complete) {
     clearInterval(prayTimer);
     prayTimer = null;
-    if (complete) {
-      state.prayed = true;
-      audio.bell();
-      haptics.success();
-      prayRing.hidden = true;
-      chant.classList.remove('on');
-      setStep('plant');
-    } else {
-      prayFg.style.strokeDashoffset = '339';
-      chant.classList.remove('on');
-    }
+    prayRing.classList.remove('holding');
+    if (!complete) return;
+    state.prayed = true;
+    audio.bell();
+    setTimeout(() => audio.gong(), 260);
+    haptics.success();
+    fx.burst(emberSpec(() => rectCenter(prayRing), { }), 26);
+    prayRing.hidden = true;
+    chantStage.hidden = true;
+    lineWords.forEach((el_) => el_.classList.remove('on', 'said'));
+    setStep('plant');
   }
 
   el.addEventListener('pointerdown', (e) => {
@@ -200,6 +254,32 @@ export function createShrine() {
   window.addEventListener('pointermove', onMove, { passive: false });
   window.addEventListener('pointerup', () => { onUp(); cancelPray(); });
   window.addEventListener('pointercancel', () => { onUp(); cancelPray(); });
+
+  // ── พระประธาน: tap to pay respect ───────────────────────────
+  const buddha = el.querySelector('.prop-buddha');
+  let sathuCount = 0;
+  buddha.addEventListener('click', (e) => {
+    if (step === 'pray') return; // that tap was the start of a prayer hold
+    audio.unlock();
+    audio.chime();
+    haptics.light();
+    sathuCount += 1;
+    const words = ['สาธุ', 'สาธุ', 'สาธุ สาธุ', 'ขอให้สมปรารถนา'];
+    floatWord(words[Math.min(sathuCount - 1, words.length - 1)], e.clientX, e.clientY);
+    fx.burst(emberSpec(() => ({ x: e.clientX, y: e.clientY })), 12);
+  });
+
+  // ── ระฆัง: ring it whenever you like ────────────────────────
+  bell.addEventListener('click', () => {
+    audio.unlock();
+    audio.bell();
+    haptics.knock();
+    bell.classList.remove('rung');
+    void bell.offsetWidth; // restart the swing
+    bell.classList.add('rung');
+    fx.burst(emberSpec(() => rectCenter(bell, 0.5, 0.7)), 10);
+    setTimeout(() => bell.classList.remove('rung'), 2000);
+  });
 
   // ── step 5: the wish ────────────────────────────────────────
   el.querySelector('[data-action="to-shake"]').addEventListener('click', () => {
@@ -235,7 +315,13 @@ export function createShrine() {
       hand.style.opacity = '';
       handImg.src = 'assets/props/incense.png';
       prayRing.hidden = true;
+      chantStage.hidden = true;
       prayFg.style.strokeDashoffset = '339';
+      prayElapsed = 0;
+      lastBeat = -1;
+      prayBaseY = 0;
+      chantNow.innerHTML = '';
+      lineWords.forEach((el_) => el_.classList.remove('on', 'said'));
       wishPanel.hidden = true;
       setStep('candle');
     },
